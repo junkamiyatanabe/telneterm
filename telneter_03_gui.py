@@ -31,7 +31,7 @@ layout = [
     [sg.Text("OUT>",size=(5,1),justification='right'),sg.Text(size=(20,1), key="-OUTPUT-")] ,
     [sg.Text(" IN>",size=(5,1),justification='right'),sg.Text(size=(20,1), key="-INPUT-")] ,
     [sg.Input(key='-SENDCOM-',size=(23,1), pad=((0,0),(20,0)))],
-    [sg.Button('Command Send')]
+    [sg.Button('Command Send',key="Send")]
 ]
 
 # ウィンドウを作成
