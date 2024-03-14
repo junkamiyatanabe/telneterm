@@ -2,21 +2,24 @@
 
 import tkinter as tk
 from tkinter import ttk
+from tkinter import messagebox
 import telnetlib
 
 # コマンド送信の関数
 def send_command(cmd):
-    tn.write(cmd.encode("utf-8")) # cmdをUTF-8にエンコードして送信
-    response = tn.read_some().decode("utf-8")  # 受信データもUTF-8にエンコード
-    output_value.set(cmd) # 送信データをTextに表示
-    input_value.set(response) # 受信データをTextに表示
+    if not connection_error_occurred:
+        tn.write(cmd.encode("utf-8")) # cmdをUTF-8にエンコードして送信
+        response = tn.read_some().decode("utf-8")  # 受信データもUTF-8にエンコード
+        output_value.set(cmd) # 送信データをTextに表示
+        input_value.set(response) # 受信データをTextに表示
 
 # 検査設定読み出しの関数
 def send_pr():
-    tn.write("PR\r\n".encode("utf-8"))
-    response = tn.read_some().decode("utf-8")
-    nnn_value.set("\r\nNo. " + response[5:9]) # 検査設定Noだけスライスして表示
-    input_value.set(response) # 受信データをTextに表示
+    if not connection_error_occurred:
+        tn.write("PR\r\n".encode("utf-8"))
+        response = tn.read_some().decode("utf-8")
+        nnn_value.set("\r\nNo. " + response[5:9]) # 検査設定Noだけスライスして表示
+        input_value.set(response) # 受信データをTextに表示
 
 HOST = "192.168.0.10"
 PORT = 8500
@@ -78,17 +81,27 @@ root.grid_rowconfigure(6,weight=1)
 root.grid_rowconfigure(7,weight=1)
 root.grid_rowconfigure(8,weight=1)
 
-tn = telnetlib.Telnet(HOST, PORT)
+# telnet接続不可の場合アラートを出す（messagebox使用）
+try:
+    tn = telnetlib.Telnet(HOST, PORT)
+    # 最初だけ実行
+    tn.write("RUN\r\n".encode("utf-8"))
+    response = tn.read_some().decode("utf-8")
+    tn.write("PR\r\n".encode("utf-8"))
+    response = tn.read_some().decode("utf-8")
+    nnn_value.set("\r\nNo. " + response[5:9])
 
-# 最初だけ実行
-tn.write("RUN\r\n".encode("utf-8"))
-response = tn.read_some().decode("utf-8")
-tn.write("PR\r\n".encode("utf-8"))
-response = tn.read_some().decode("utf-8")
-nnn_value.set("\r\nNo. " + response[5:9])
+    output_value.set("Send Command\r\n") 
+    input_value.set("Recive Response\r\n") 
 
-output_value.set("Send Command\r\n") 
-input_value.set("Recive Response\r\n") 
+except Exception as e:
+    messagebox.showerror("Error", "接続が失敗しました。詳細：" + str(e))
+    tn = None
+    output_value.set("Telnet \r\n") 
+    input_value.set("Error \r\n") 
+    # フラグを立てておく
+    connection_error_occurred = True
+
 
 
 def set_btn_clicked():
@@ -117,9 +130,10 @@ def send_btn_clicked():
 
 root.protocol("WM_DELETE_WINDOW", lambda: on_closing())
 def on_closing():
-    cmd ="SET\r\n"
-    send_command(cmd)
     root.quit()
-    tn.close()
+    if not connection_error_occurred:
+        cmd ="SET\r\n"
+        send_command(cmd)
+        tn.close()
 
 root.mainloop()
