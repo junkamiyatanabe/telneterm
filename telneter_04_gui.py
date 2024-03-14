@@ -82,25 +82,31 @@ root.grid_rowconfigure(7,weight=1)
 root.grid_rowconfigure(8,weight=1)
 
 # telnet接続不可の場合アラートを出す（messagebox使用）
+HOST = "192.168.0.10"
+PORT = 8500
 try:
     tn = telnetlib.Telnet(HOST, PORT)
-    # 最初だけ実行
+    output_value.set("Send Command\r\n") 
+    input_value.set("Recive Response\r\n") 
+    connection_error_occurred = False 
+except Exception as e:
+    messagebox.showerror("Error", "接続が失敗しました。詳細：" + str(e))
+    tn = None
+    output_value.set("Telnet connection errors \r\n") 
+    input_value.set("Telnet connection errors \r\n") 
+    # フラグを立てておく
+    connection_error_occurred = True
+
+
+# 最初だけ実行
+if not connection_error_occurred:
     tn.write("RUN\r\n".encode("utf-8"))
     response = tn.read_some().decode("utf-8")
     tn.write("PR\r\n".encode("utf-8"))
     response = tn.read_some().decode("utf-8")
     nnn_value.set("\r\nNo. " + response[5:9])
 
-    output_value.set("Send Command\r\n") 
-    input_value.set("Recive Response\r\n") 
 
-except Exception as e:
-    messagebox.showerror("Error", "接続が失敗しました。詳細：" + str(e))
-    tn = None
-    output_value.set("Telnet \r\n") 
-    input_value.set("Error \r\n") 
-    # フラグを立てておく
-    connection_error_occurred = True
 
 
 
