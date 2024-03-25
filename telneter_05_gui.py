@@ -150,10 +150,6 @@ HOST = "192.168.0.10"
 PORT = 8500
 try:
     tn = telnetlib.Telnet(HOST, PORT)
-    output_value.set("Send Command\r\n") 
-    input_value.set("Recive Response\r\n") 
-    # フラグを立てておく（接続ＯＫ）
-    connection_error_occurred = False 
 except Exception as e:
     messagebox.showerror("Error", "接続が失敗しました。詳細：" + str(e))
     tn = None
@@ -161,6 +157,11 @@ except Exception as e:
     input_value.set("Telnet connection errors \r\n") 
     # フラグを立てておく（接続ＮＧ）
     connection_error_occurred = True
+else:
+    output_value.set("Send Command\r\n") 
+    input_value.set("Recive Response\r\n") 
+    # フラグを立てておく（接続ＯＫ）
+    connection_error_occurred = False 
 
 
 # 最初だけ実行　==============================
