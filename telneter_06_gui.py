@@ -83,8 +83,8 @@ def rgb_classification(rdat):
     else:
         Hcolor = 'NG' # 上記のどれにも該当しない場合
     
-    input_value.set(Hcolor)
-    in_color_value.set(str(R) + ", " + str(G) + ", " + str(B))
+    in_color_value.set(Hcolor)
+    in_color_rgb.set(str(R) + ", " + str(G) + ", " + str(B))
 
     Lcolor = '#{:02x}{:02x}{:02x}'.format(R, G, B)
     input_color_a.config(bg=Lcolor)
@@ -119,7 +119,7 @@ sendcom_value = tk.StringVar()
 cnt_value = tk.StringVar()
 
 in_color_value =  tk.StringVar()
-
+in_color_rgb =  tk.StringVar()
 
 # main frame
 frame = tk.Frame(root)
@@ -184,10 +184,11 @@ send_button.grid(row=3, column=2, sticky="nsew", padx=10, pady=5)
 clr_frame = tk.LabelFrame(frame, text='Color', bd=2, relief=tk.RIDGE)
 clr_frame.grid(row=4, column=0, sticky="nsew", padx=50,pady=20)
 input_color_a = tk.Label(clr_frame,text="               ")
-input_color_a.grid(row=0, column=0, sticky="nsew")
-input_color = tk.Label(clr_frame, textvariable=in_color_value)
-input_color.grid(row=0, column=1, sticky="nsew")
-
+input_color_a.grid(row=0, column=0, sticky="nsew", padx=10)
+input_color_b = tk.Label(clr_frame, textvariable=in_color_value)
+input_color_b.grid(row=0, column=1, sticky="nsew")
+input_color_c = tk.Label(clr_frame, textvariable=in_color_rgb)
+input_color_c.grid(row=0, column=2, sticky="nsew", padx=10)
 
 # telnet接続エラーの場合アラートを出す（messagebox使用） ==============================
 HOST = "192.168.0.10"
