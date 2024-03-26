@@ -58,6 +58,8 @@ def send_pr():
         response = tn.read_some().decode("utf-8")
         nnn_value.set("No. " + response[5:7]) # 検査設定Noだけスライスして表示
         input_value.set(response) # 受信データをTextに表示
+        global nnn_num
+        nnn_num = int(response[5:7])
 
 def receive_data():
     global rdat
@@ -67,28 +69,49 @@ def receive_data():
         rgb_classification(rdat)
         
 
-def rgb_classification(rdat):
-    # RGB値を取得
-    R, G, B = map(int, rdat.split(','))
+def rgb_classification(rdat): 
 
-    # 色相を判定
-    if abs(R - G) < 30 and R > B and G > B:  # RとGがおおよそ同じような値で、B値より大きい場合を黄色系と判定
-        Hcolor = 'YELLO'
-    elif R > G and R > B:
-        Hcolor = 'RED'
-    elif G > R and G > B:
-        Hcolor = 'GREEN'
-    elif B > R and B > G:
-        Hcolor = 'BLUE'
-    else:
-        Hcolor = 'NG' # 上記のどれにも該当しない場合
-    
-    in_color_value.set(Hcolor)
-    in_color_rgb.set(str(R) + ", " + str(G) + ", " + str(B))
+    if nnn_num == 3:
+        # RGB値を取得
+        R, G, B = map(int, rdat.split(','))
+        # 色相を判定
+        if abs(R - G) < 30 and R > B and G > B:  # RとGがおおよそ同じような値で、B値より大きい場合を黄色系と判定
+            Hcolor = 'YELLOW'
+        elif R > G and R > B:
+            Hcolor = 'RED'
+        elif G > R and G > B:
+            Hcolor = 'GREEN'
+        elif B > R and B > G:
+            Hcolor = 'BLUE'
+        else:
+            Hcolor = 'NG' # 上記のどれにも該当しない場合
+        
+        in_color_value.set(Hcolor)
+        in_color_rgb.set(str(R) + ", " + str(G) + ", " + str(B))
 
-    Lcolor = '#{:02x}{:02x}{:02x}'.format(R, G, B)
-    input_color_a.config(bg=Lcolor)
-    
+        Lcolor = '#{:02x}{:02x}{:02x}'.format(R, G, B)
+        input_color_a.config(bg=Lcolor)
+    elif nnn_num == 4:
+        # RGB値を取得
+        H, S, V = map(int, rdat.split(','))
+        # H値を判定
+        if H > 0 and H < 35: 
+            Hcolor = 'red'
+        elif H >= 35 and H < 70: 
+            Hcolor = 'yellow'
+        elif H >= 70 and H < 120:
+            Hcolor = 'green'
+        elif H >= 120 and H < 210:
+            Hcolor = 'blue'
+        elif H >= 210 and H <= 256:
+            Hcolor = 'red'
+        else:
+            Hcolor = 'error' # 上記のどれにも該当しない場合
+        in_color_value.set(Hcolor)
+        if Hcolor == "error":
+            input_color_a.config(bg="white")
+        else:
+            input_color_a.config(bg=Hcolor)
 
 # カウントの関数
 def count_up():
@@ -183,9 +206,9 @@ send_button.grid(row=3, column=2, sticky="nsew", padx=10, pady=5)
 # color frame
 clr_frame = tk.LabelFrame(frame, text='Color', bd=2, relief=tk.RIDGE)
 clr_frame.grid(row=4, column=0, sticky="nsew", padx=50,pady=20)
-input_color_a = tk.Label(clr_frame,text="               ")
+input_color_a = tk.Label(clr_frame,font=("Arial", 30),text="       ")
 input_color_a.grid(row=0, column=0, sticky="nsew", padx=10)
-input_color_b = tk.Label(clr_frame, textvariable=in_color_value)
+input_color_b = tk.Label(clr_frame, font=("Arial", 30),textvariable=in_color_value)
 input_color_b.grid(row=0, column=1, sticky="nsew")
 input_color_c = tk.Label(clr_frame, textvariable=in_color_rgb)
 input_color_c.grid(row=0, column=2, sticky="nsew", padx=10)
@@ -218,6 +241,7 @@ if not connection_error_occurred:
     tn.write("PR\r\n".encode("utf-8")) 
     response = tn.read_some().decode("utf-8")
     nnn_value.set("No. " + response[5:7])
+    nnn_num = int(response[5:7])
 
 # イベント処理の関数　==============================
 # 検査設定
