@@ -90,7 +90,7 @@ def rgb_classification(rdat):
    
         Lcolor = '#{:02x}{:02x}{:02x}'.format(R, G, B)
         input_color_a.config(bg=Lcolor)
-    elif nnn_num == 4:
+    elif nnn_num == 10:
         # RGB値を取得
         H, S, V = map(int, rdat.split(','))
         # H値を判定
