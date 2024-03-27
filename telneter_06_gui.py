@@ -42,7 +42,8 @@ data =  '''
         U2SXbfbZaKet9tpst+3223DHLffcdNdt991456333nz37fffgAcuuNwBAQA7
     '''
 
-# コマンド送信の関数　============================================================
+# 関数　============================================================
+# コマンド送信の関数
 def send_command(cmd):
     if not connection_error_occurred:
         tn.write(cmd.encode("utf-8")) # cmdをUTF-8にエンコードして送信
@@ -68,7 +69,7 @@ def receive_data():
         # input_value.set(rdat) # 受信データをTextに表示
         rgb_classification(rdat)
         
-
+# 色判定関連の関数
 def rgb_classification(rdat): 
 
     if nnn_num == 3:
@@ -217,7 +218,7 @@ input_color_c.grid(row=0, column=2, sticky="nsew", padx=10)
 HOST = "192.168.0.10"
 PORT = 8500
 try:
-    tn = telnetlib.Telnet(HOST, PORT)
+    tn = telnetlib.Telnet(HOST, PORT, 10)
 except Exception as e:
     messagebox.showerror("Error", "接続が失敗しました。詳細：" + str(e))
     tn = None
