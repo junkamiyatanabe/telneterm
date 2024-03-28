@@ -94,9 +94,9 @@ def rgb_classification(rdat):
         # RGB値を取得
         H, S, V = map(int, rdat.split(','))
         # H値を判定
-        if H > 0 and H < 35: 
+        if H > 0 and H < 20: 
             Hcolor = 'red'
-        elif H >= 35 and H < 70: 
+        elif H >= 20 and H < 70: 
             Hcolor = 'yellow'
         elif H >= 70 and H < 120:
             Hcolor = 'green'
@@ -171,7 +171,7 @@ input_color_c = tk.Label(clr_frame, textvariable=in_color_rgb)
 input_color_c.grid(row=0, column=2, sticky="nsew", padx=10)
 
 # telnet接続エラーの場合アラートを出す（messagebox使用） ==============================
-HOST = "192.168.0.10"
+HOST = "192.168.3.10"
 PORT = 8500
 try:
     tn = telnetlib.Telnet(HOST, PORT)
